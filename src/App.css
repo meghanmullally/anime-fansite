@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'VCR OSD Mono';
+  src: url('./fonts/VCR_OSD_MONO_1.001.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('https://gifdb.com/images/high/tv-static-rainbow-no-signal-6mhyvkjmqa3c4leq.gif');
+  background-size: cover; /* Make the GIF cover the entire screen */
+  background-repeat: no-repeat; /* Avoid repeating the image */
+  background-attachment: fixed; /* Keep the background static when scrolling */
+  height: 100vh; /* Ensure it covers the viewport */
+  overflow: hidden; /* Remove scrollbars if needed */
+  font-family: 'VCR OSD Mono', monospace; /* Use the font globally */
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
