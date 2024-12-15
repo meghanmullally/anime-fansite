@@ -1,25 +1,51 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import DragonBall from './components/DragonBall/DragonBall';
-import SailorMoon from './components/SailorMoon/SailorMoon';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Home from "./components/Home/Home";
+import "./App.css";
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    dragonBall: [],
+    sailorMoon: [],
+  });
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const dragonBallUrl = `https://api.jikan.moe/v4/anime?q=dragon%20ball&start_date=1900-01-01&end_date=1999-12-31`;
+        const sailorMoonUrl = `https://api.jikan.moe/v4/anime?q=sailor%20moon&start_date=1900-01-01&end_date=1999-12-31`;
+
+        const dragonBallRes = await fetch(dragonBallUrl);
+        const dragonBall = await dragonBallRes.json();
+
+        const sailorMoonRes = await fetch(sailorMoonUrl);
+        const sailorMoon = await sailorMoonRes.json();
+
+        setData({
+          dragonBall: dragonBall.data || [],
+          sailorMoon: sailorMoon.data || [],
+        });
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
   return (
-    <Router>
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/dragon-ball">Dragon Ball</a></li>
-          <li><a href="/sailor-moon">Sailor Moon</a></li>
-        </ul>
-      </nav>
-      <Routes>
-        <Route path="/" element={<h1>Welcome to My 90s Anime Fansite</h1>} />
-        <Route path="/dragon-ball" element={<DragonBall />} />
-        <Route path="/sailor-moon" element={<SailorMoon />} />
-      </Routes>
-    </Router>
+    <div className="App">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <Home
+          dragonBallData={data.dragonBall}
+          sailorMoonData={data.sailorMoon}
+        />
+      )}
+    </div>
   );
 };
 
