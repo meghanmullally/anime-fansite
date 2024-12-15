@@ -10,7 +10,6 @@
   - [**Usage**](#usage)
     - [**1. Switching Tabs**](#1-switching-tabs)
     - [**2. Exploring Anime**](#2-exploring-anime)
-    - [**3. Desktop Icons**](#3-desktop-icons)
   - [**Future Enhancements**](#future-enhancements)
   - [**Credits**](#credits)
 
@@ -31,8 +30,6 @@ This portal is all about recreating the feel of browsing the web in the late 90s
   - Play the original theme songs to fully immerse yourself in the experience.
 - **Dynamic Switching**
   - Seamlessly switch between Dragon Ball and Sailor Moon using the retro-style taskbar.
-- **Desktop Icons**
-  - Optional desktop icons (like a trash can or Internet Explorer) to enhance the retro feel.
 
 ---
 
@@ -52,9 +49,6 @@ This portal is all about recreating the feel of browsing the web in the late 90s
 ### **2. Exploring Anime**
 - View episode lists, movies, and character bios for both shows.
 - Play theme songs from the embedded audio players.
-
-### **3. Desktop Icons**
-- Check out the retro-style desktop icons (like a trash can or Explorer shortcut) that add authenticity to the retro theme.
 
 ---
 
