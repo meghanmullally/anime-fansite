@@ -36,7 +36,7 @@ const Home = ({ dragonBallData = [], sailorMoonData = [] }) => {
           <button className="start-button">
             <span
               className="windows-icon"
-              style={{ backgroundImage: `url('public/assets/windows95_icons/Windows logo (without text).ico')` }}
+              style={{ backgroundImage: `url('/assets/windows95_icons/Windows logo (without text).ico')` }}
             ></span>
             Start
           </button>

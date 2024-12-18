@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
           <div
             className="toolbar-icon"
             style={{
-              backgroundImage: `url('public/assets/windows95_icons/file.png')`,
+              backgroundImage: `url('/assets/windows95_icons/file.png')`,
             }}
           ></div>
           Refresh
@@ -57,7 +57,7 @@ const Layout = ({ children }) => {
       </div>
       <div className="content">{children}</div>
       <div className="status-bar">
-        <span className="status-text"><img src="public/assets/Ico/Webpage.ico" className="status-icon-img"/>Done</span>
+        <span className="status-text"><img src="/assets/Ico/Webpage.ico" className="status-icon-img"/>Done</span>
         <span className="status-icon"><img className="status-icon-img" src="/assets/windows95_icons/Earth (16 colors).ico"/>Internet</span>
       </div>
     </div>
