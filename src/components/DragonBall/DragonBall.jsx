@@ -83,7 +83,7 @@ const DragonBall = () => {
           <div className="section theme-song">
             <h2 className="section-title">Theme Song</h2>
             <audio controls>
-              <source src="https://ia801700.us.archive.org/21/items/dbz-hsc-01-ongatesen-flac/01.%20CHA-LA%20HEAD-CHA-LA.mp3" type="audio/mpeg" />
+              <source src="https://archive.org/download/dbz-hsc-01-ongatesen-flac/01.%20CHA-LA%20HEAD-CHA-LA.mp3" type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
           </div>
