@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./SailorMoon.css";
 
+const ANILIST_URL = "https://graphql.anilist.co";
+
+const anilistFetch = (query) =>
+  fetch(ANILIST_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+  }).then((res) => res.json());
+
 const SailorMoon = () => {
-  const [episodes, setEpisodes] = useState([]);
+  const [episodeCount, setEpisodeCount] = useState(0);
   const [characters, setCharacters] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,27 +19,34 @@ const SailorMoon = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const episodesResponse = await fetch(
-          "https://api.jikan.moe/v4/anime/530/episodes" // Sailor Moon's anime ID
-        );
-        const episodesData = await episodesResponse.json();
+        const [seriesRes, moviesRes] = await Promise.all([
+          anilistFetch(`{
+            Media(id: 530, type: ANIME) {
+              episodes
+              characters(page: 1, perPage: 20) {
+                nodes { id name { full } image { medium } }
+              }
+            }
+          }`),
+          anilistFetch(`{
+            Page(perPage: 10) {
+              media(search: "Sailor Moon", type: ANIME, format: MOVIE) {
+                id title { romaji english }
+                startDate { year month day }
+                coverImage { medium }
+                description
+              }
+            }
+          }`),
+        ]);
 
-        const charactersResponse = await fetch(
-          "https://api.jikan.moe/v4/anime/530/characters"
+        setEpisodeCount(seriesRes.data.Media.episodes || 0);
+        setCharacters(seriesRes.data.Media.characters.nodes || []);
+        setMovies(
+          (moviesRes.data.Page.media || []).filter(
+            (m) => m.startDate?.year < 2000
+          )
         );
-        const charactersData = await charactersResponse.json();
-
-        const moviesResponse = await fetch(
-          "https://api.jikan.moe/v4/anime?q=sailor%20moon&type=movie"
-        );
-        const moviesData = await moviesResponse.json();
-
-        setEpisodes(episodesData.data || []);
-        setCharacters(charactersData.data || []);
-        const filteredMovies = moviesData.data.filter((movie) =>
-          new Date(movie.aired.from).getFullYear() < 2000
-        );
-        setMovies(filteredMovies);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -40,6 +56,16 @@ const SailorMoon = () => {
 
     fetchData();
   }, []);
+
+  const formatDate = ({ year, month, day }) => {
+    if (!year) return "N/A";
+    if (!month) return `${year}`;
+    return new Date(year, month - 1, day || 1).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: day ? "numeric" : undefined,
+    });
+  };
 
   return (
     <div className="sailorMoon-page">
@@ -51,16 +77,9 @@ const SailorMoon = () => {
         />
         <div className="sailorMoon-info">
           <h1>Sailor Moon</h1>
-          <p>
-            <strong>Aired:</strong> March 7, 1992 - February 8, 1997
-          </p>
-          <p>
-            <strong>Genres:</strong> Magical Girl, Romance, Adventure, Comedy
-          </p>
-          <p>
-            <strong>Rating:</strong> PG (Mild Violence, Fantasy Themes)
-          </p>
-
+          <p><strong>Aired:</strong> March 7, 1992 - February 8, 1997</p>
+          <p><strong>Genres:</strong> Magical Girl, Romance, Adventure, Comedy</p>
+          <p><strong>Rating:</strong> PG (Mild Violence, Fantasy Themes)</p>
           <div className="section theme-song">
             <h2 className="sailorMoon-sectionTitle">Theme Song</h2>
             <audio controls>
@@ -73,7 +92,11 @@ const SailorMoon = () => {
 
       <div className="sailorMoon-mainContent">
         <div className="sailorMoon-section">
-          <img className="sailorMoon-banner" src="https://i0.wp.com/yumetwinsblog.wpcomstaging.com/wp-content/uploads/2024/08/sailor-moon-misconceptions-thumbnail.webp?fit=1024%2C576&ssl=1" />
+          <img
+            className="sailorMoon-banner"
+            src="https://i0.wp.com/yumetwinsblog.wpcomstaging.com/wp-content/uploads/2024/08/sailor-moon-misconceptions-thumbnail.webp?fit=1024%2C576&ssl=1"
+            alt="Sailor Moon Banner"
+          />
           <h2 className="sailorMoon-sectionTitle">Synopsis</h2>
           <p>
             Sailor Moon follows Usagi Tsukino, a clumsy teenage girl who
@@ -87,23 +110,18 @@ const SailorMoon = () => {
           <h2 className="sailorMoon-sectionTitle">Episode List</h2>
           {loading ? (
             <p>Loading episodes...</p>
-          ) : episodes.length === 0 ? (
+          ) : episodeCount === 0 ? (
             <p>No episodes available.</p>
           ) : (
             <table className="sailorMoon-table">
               <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th>Aired</th>
-                </tr>
+                <tr><th>#</th><th>Episode</th></tr>
               </thead>
               <tbody>
-                {episodes.map((episode, index) => (
-                  <tr key={episode.mal_id}>
-                    <td>{index + 1}</td>
-                    <td>{episode.title}</td>
-                    <td>{episode.aired || "N/A"}</td>
+                {Array.from({ length: episodeCount }, (_, i) => (
+                  <tr key={i + 1}>
+                    <td>{i + 1}</td>
+                    <td>Episode {i + 1}</td>
                   </tr>
                 ))}
               </tbody>
@@ -120,26 +138,17 @@ const SailorMoon = () => {
           ) : (
             <table className="sailorMoon-table">
               <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Image</th>
-                  <th>Release Date</th>
-                  <th>Synopsis</th>
-                </tr>
+                <tr><th>Title</th><th>Image</th><th>Release Date</th><th>Synopsis</th></tr>
               </thead>
               <tbody>
                 {movies.map((movie) => (
-                  <tr key={movie.mal_id}>
-                    <td>{movie.title}</td>
+                  <tr key={movie.id}>
+                    <td>{movie.title.english || movie.title.romaji}</td>
                     <td>
-                      <img
-                        src={movie.images.jpg.image_url}
-                        alt={movie.title}
-                        width="100"
-                      />
+                      <img src={movie.coverImage.medium} alt={movie.title.romaji} width="100" />
                     </td>
-                    <td>{movie.aired.from.split("T")[0] || "N/A"}</td>
-                    <td>{movie.synopsis || "No synopsis available."}</td>
+                    <td>{formatDate(movie.startDate)}</td>
+                    <td>{movie.description?.replace(/<[^>]*>/g, "") || "No synopsis available."}</td>
                   </tr>
                 ))}
               </tbody>
@@ -156,20 +165,13 @@ const SailorMoon = () => {
           ) : (
             <div className="sailorMoon-characters">
               {characters.map((character) => (
-                <div
-                  key={character.character.mal_id}
-                  className="sailorMoon-characterCard"
-                >
+                <div key={character.id} className="sailorMoon-characterCard">
                   <img
-                    src={character.character.images.jpg.image_url}
-                    alt={character.character.name}
+                    src={character.image.medium}
+                    alt={character.name.full}
                     className="sailorMoon-characterImg"
                   />
-                  <p>
-                    <strong>{character.character.name}</strong>
-                    <br />
-                    {character.role}
-                  </p>
+                  <p><strong>{character.name.full}</strong></p>
                 </div>
               ))}
             </div>

@@ -6,16 +6,21 @@
 }
 
 .sailorMoon-sidebar {
-    flex: 0 0 250px;
+    flex: 0 0 200px;
     background: linear-gradient(to bottom, #ffc0cb, #ffff99);
     border: 3px solid #ff69b4;
     padding: 15px;
     text-align: center;
     box-shadow: 5px 5px 0px #000;
+    overflow: hidden;
+}
+
+.sailorMoon-sidebar audio {
+    width: 100%;
 }
 
 .sailorMoon-logo {
-    width: 300px;
+    width: 100%;
     height: auto;
     margin-bottom: 15px;
     border: 3px solid #add8e6;
@@ -31,28 +36,33 @@
 }
 
 .sailorMoon-info p {
-    font-size: 14px;
+    font-size: 13px;
     margin: 5px 0;
     color: #000000;
     text-shadow: 1px 1px #ffc0cb;
+}
+
+.sailorMoon-sidebar .sailorMoon-sectionTitle {
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px #2e3a87;
 }
 
 .sailorMoon-banner {
     width: 100%;
     height: auto;
     border: 2px solid #ff69b4;
+    margin-bottom: 20px;
 }
 
 .sailorMoon-mainContent {
     flex: 1;
     padding: 15px;
     border: 3px solid #ff69b4;
-    box-shadow: 2px 2px 0px #000; 
+    box-shadow: 2px 2px 0px #000;
     color: #000000;
-    background-image: url('https://img.freepik.com/free-vector/aesthetic-sky-background-vector-surreal-aesthetic-design_53876-156331.jpg?t=st=1734228597~exp=1734232197~hmac=48a70a87840f1e711fb5facf8c805ce6205d5e3db61d788f14b6f2098e853e41&w=2000');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: #fff5f9;
+    overflow-y: auto;
 }
 
 .sailorMoon-section {
@@ -60,11 +70,15 @@
 }
 
 .sailorMoon-sectionTitle {
-    font-size: 20px;
-    color: #ffc0cb;
-    text-shadow: 2px 2px #2e3a87;
-    border-bottom: 2px solid #ffff99;
-    padding-bottom: 5px;
+    font-size: 30px;
+    font-weight: 900;
+    color: #ff69b4;
+    text-shadow: 3px 3px 0px #2e3a87, 5px 5px 0px #000000;
+    border-bottom: 3px solid #2e3a87;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .sailorMoon-table {
@@ -89,6 +103,12 @@
     color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.sailorMoon-table th:first-child,
+.sailorMoon-table td:first-child {
+    width: 50px;
+    text-align: center;
 }
 
 .sailorMoon-characters {
