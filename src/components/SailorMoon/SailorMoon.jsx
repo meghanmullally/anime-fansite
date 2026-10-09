@@ -113,7 +113,7 @@ const SailorMoon = () => {
           ) : episodeCount === 0 ? (
             <p>No episodes available.</p>
           ) : (
-            <table className="sailorMoon-table">
+            <table className="sailorMoon-table episode-table">
               <thead>
                 <tr><th>#</th><th>Episode</th></tr>
               </thead>

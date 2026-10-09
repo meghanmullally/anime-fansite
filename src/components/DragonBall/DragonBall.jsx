@@ -30,7 +30,7 @@ const DragonBall = () => {
           }`),
           anilistFetch(`{
             Page(perPage: 10) {
-              media(search: "Dragon Ball", type: ANIME, format: MOVIE) {
+              media(search: "Dragon Ball", type: ANIME, format: MOVIE, perPage: 50) {
                 id title { romaji english }
                 startDate { year month day }
                 coverImage { medium }
@@ -113,7 +113,7 @@ const DragonBall = () => {
           ) : episodeCount === 0 ? (
             <p>No episodes available.</p>
           ) : (
-            <table className="anime-table">
+            <table className="anime-table episode-table">
               <thead>
                 <tr><th>#</th><th>Episode</th></tr>
               </thead>

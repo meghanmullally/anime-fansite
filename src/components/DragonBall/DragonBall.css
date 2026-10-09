@@ -36,13 +36,13 @@
     box-shadow: 7px 7px 0px #FFD700;
 }
 
-.sidebar .anime-info h1 {
+.sidebar .dragonBall-info h1 {
     font-size: 24px;
     color: #FFD700;
     text-shadow: 2px 2px #000;
 }
 
-.sidebar .anime-info p {
+.sidebar .dragonBall-info p {
     font-size: 13px;
     margin: 5px 0;
     color: #FFFFFF;
@@ -111,8 +111,8 @@
     border: 2px solid #FFD700;
 }
 
-.anime-table th:first-child,
-.anime-table td:first-child {
+.anime-table.episode-table th:first-child,
+.anime-table.episode-table td:first-child {
     width: 50px;
     text-align: center;
 }
