@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./DragonBall.css";
 
+const ANILIST_URL = "https://graphql.anilist.co";
+
+const anilistFetch = (query) =>
+  fetch(ANILIST_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+  }).then((res) => res.json());
+
 const DragonBall = () => {
-  const [episodes, setEpisodes] = useState([]);
+  const [episodeCount, setEpisodeCount] = useState(0);
   const [characters, setCharacters] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,28 +19,34 @@ const DragonBall = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const episodesResponse = await fetch(
-          "https://api.jikan.moe/v4/anime/223/episodes"
-        );
-        const episodesData = await episodesResponse.json();
+        const [seriesRes, moviesRes] = await Promise.all([
+          anilistFetch(`{
+            Media(id: 223, type: ANIME) {
+              episodes
+              characters(page: 1, perPage: 20) {
+                nodes { id name { full } image { medium } }
+              }
+            }
+          }`),
+          anilistFetch(`{
+            Page(perPage: 10) {
+              media(search: "Dragon Ball", type: ANIME, format: MOVIE) {
+                id title { romaji english }
+                startDate { year month day }
+                coverImage { medium }
+                description
+              }
+            }
+          }`),
+        ]);
 
-        const charactersResponse = await fetch(
-          "https://api.jikan.moe/v4/anime/223/characters"
+        setEpisodeCount(seriesRes.data.Media.episodes || 0);
+        setCharacters(seriesRes.data.Media.characters.nodes || []);
+        setMovies(
+          (moviesRes.data.Page.media || []).filter(
+            (m) => m.startDate?.year < 2000
+          )
         );
-        const charactersData = await charactersResponse.json();
-
-        const moviesResponse = await fetch(
-          "https://api.jikan.moe/v4/anime?q=dragon%20ball&type=movie"
-        );
-        const moviesData = await moviesResponse.json();
-
-        setEpisodes(episodesData.data || []);
-        setCharacters(charactersData.data || []);
-
-        const filteredMovies = moviesData.data.filter(
-          (movie) => new Date(movie.aired.from).getFullYear() < 2000
-        );
-        setMovies(filteredMovies);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -41,6 +56,16 @@ const DragonBall = () => {
 
     fetchData();
   }, []);
+
+  const formatDate = ({ year, month, day }) => {
+    if (!year) return "N/A";
+    if (!month) return `${year}`;
+    return new Date(year, month - 1, day || 1).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: day ? "numeric" : undefined,
+    });
+  };
 
   return (
     <div className="dragonBall-page">
@@ -52,16 +77,9 @@ const DragonBall = () => {
         />
         <div className="dragonBall-info">
           <h1>Dragon Ball</h1>
-          <p>
-            <strong>Aired:</strong> February 26, 1986 - April 19, 1989
-          </p>
-          <p>
-            <strong>Genres:</strong> Action, Adventure, Comedy, Martial Arts
-          </p>
-          <p>
-            <strong>Rating:</strong> PG (Mild Violence)
-          </p>
-
+          <p><strong>Aired:</strong> February 26, 1986 - April 19, 1989</p>
+          <p><strong>Genres:</strong> Action, Adventure, Comedy, Martial Arts</p>
+          <p><strong>Rating:</strong> PG (Mild Violence)</p>
           <div className="section theme-song">
             <h2 className="section-title">Theme Song</h2>
             <audio controls>
@@ -92,23 +110,18 @@ const DragonBall = () => {
           <h2 className="section-title">Episode List</h2>
           {loading ? (
             <p>Loading episodes...</p>
-          ) : episodes.length === 0 ? (
+          ) : episodeCount === 0 ? (
             <p>No episodes available.</p>
           ) : (
             <table className="anime-table">
               <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th>Aired</th>
-                </tr>
+                <tr><th>#</th><th>Episode</th></tr>
               </thead>
               <tbody>
-                {episodes.map((episode, index) => (
-                  <tr key={episode.mal_id}>
-                    <td>{index + 1}</td>
-                    <td>{episode.title}</td>
-                    <td>{episode.aired || "N/A"}</td>
+                {Array.from({ length: episodeCount }, (_, i) => (
+                  <tr key={i + 1}>
+                    <td>{i + 1}</td>
+                    <td>Episode {i + 1}</td>
                   </tr>
                 ))}
               </tbody>
@@ -125,26 +138,17 @@ const DragonBall = () => {
           ) : (
             <table className="anime-table">
               <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Image</th>
-                  <th>Release Date</th>
-                  <th>Synopsis</th>
-                </tr>
+                <tr><th>Title</th><th>Image</th><th>Release Date</th><th>Synopsis</th></tr>
               </thead>
               <tbody>
                 {movies.map((movie) => (
-                  <tr key={movie.mal_id}>
-                    <td>{movie.title}</td>
+                  <tr key={movie.id}>
+                    <td>{movie.title.english || movie.title.romaji}</td>
                     <td>
-                      <img
-                        src={movie.images.jpg.image_url}
-                        alt={movie.title}
-                        width="100"
-                      />
+                      <img src={movie.coverImage.medium} alt={movie.title.romaji} width="100" />
                     </td>
-                    <td>{movie.aired.from.split("T")[0] || "N/A"}</td>
-                    <td>{movie.synopsis || "No synopsis available."}</td>
+                    <td>{formatDate(movie.startDate)}</td>
+                    <td dangerouslySetInnerHTML={{ __html: movie.description || "No synopsis available." }} />
                   </tr>
                 ))}
               </tbody>
@@ -161,20 +165,13 @@ const DragonBall = () => {
           ) : (
             <div className="characters">
               {characters.map((character) => (
-                <div
-                  key={character.character.mal_id}
-                  className="character-card"
-                >
+                <div key={character.id} className="character-card">
                   <img
-                    src={character.character.images.jpg.image_url}
-                    alt={character.character.name}
+                    src={character.image.medium}
+                    alt={character.name.full}
                     className="character-img"
                   />
-                  <p>
-                    <strong>{character.character.name}</strong>
-                    <br />
-                    {character.role}
-                  </p>
+                  <p><strong>{character.name.full}</strong></p>
                 </div>
               ))}
             </div>

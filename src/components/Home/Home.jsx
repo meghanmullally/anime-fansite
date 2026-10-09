@@ -4,7 +4,7 @@ import DragonBall from "../DragonBall/DragonBall";
 import SailorMoon from "../SailorMoon/SailorMoon";
 import './Home.css';
 
-const Home = ({ dragonBallData = [], sailorMoonData = [] }) => {
+const Home = () => {
   const [activeTab, setActiveTab] = useState("DragonBall");
   const [currentTime, setCurrentTime] = useState("");
 
@@ -70,8 +70,8 @@ const Home = ({ dragonBallData = [], sailorMoonData = [] }) => {
       </div>
       <div>
         <Layout>
-          {activeTab === "DragonBall" && <DragonBall data={dragonBallData} />}
-          {activeTab === "SailorMoon" && <SailorMoon data={sailorMoonData} />}
+          {activeTab === "DragonBall" && <DragonBall />}
+          {activeTab === "SailorMoon" && <SailorMoon />}
         </Layout>
       </div>
     </div>
