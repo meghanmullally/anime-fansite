@@ -15,6 +15,10 @@
     overflow: hidden;
 }
 
+.sailorMoon-sidebar audio {
+    width: 100%;
+}
+
 .sailorMoon-logo {
     width: 100%;
     height: auto;

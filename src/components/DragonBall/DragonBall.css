@@ -16,6 +16,10 @@
     overflow: hidden;
 }
 
+.sidebar audio {
+    width: 100%;
+}
+
 .dragonBall-info h1 {
     font-size: 26px;
     color: #FFD700;

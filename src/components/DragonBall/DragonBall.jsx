@@ -148,7 +148,7 @@ const DragonBall = () => {
                       <img src={movie.coverImage.medium} alt={movie.title.romaji} width="100" />
                     </td>
                     <td>{formatDate(movie.startDate)}</td>
-                    <td dangerouslySetInnerHTML={{ __html: movie.description || "No synopsis available." }} />
+                    <td>{movie.description?.replace(/<[^>]*>/g, "") || "No synopsis available."}</td>
                   </tr>
                 ))}
               </tbody>
